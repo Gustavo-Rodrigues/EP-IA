@@ -9,15 +9,23 @@ import java.lang.Math;
 
 class Init{
     //the amount of nodes
-    static int max_nodes;
+    private int max_nodes;
     //transport capacity
-    static int capacity;
+    private int capacity;
     //nodes
-    static Node[] nodes;
+    private Node[] nodes;
     //start node
-    static Node depot;
+    private Node depot;
 
-    public static void ReadFile(String file){
+    public Node[] getNodes(){
+        return nodes;
+    }
+
+    public int getCapacity(){
+        return capacity;
+    }
+
+    public Init(String file){
         BufferedReader br = null;
 		try {
 			String currentLine;
@@ -36,8 +44,8 @@ class Init{
             }
 
             nodes = new Node[max_nodes];
-            for(int hope = 0; hope<nodes.length; hope++){
-                nodes[hope] = new Node();
+            for(int h = 0; h<nodes.length; h++){
+                nodes[h] = new Node();
             }
 
             //System.out.println("DIMENSION:" + max_nodes + "\nCAPACITY: " + capacity);
@@ -59,11 +67,11 @@ class Init{
             int count = 0;
             while(!(split[0].equals("DEMAND_SECTION"))){
                 if(split.length == 4){
-                    nodes[count].x = Integer.parseInt(split[2]);
-                    nodes[count].y = Integer.parseInt(split[3]);
+                    nodes[count].setX(Integer.parseInt(split[2]));
+                    nodes[count].setY(Integer.parseInt(split[3]));
                 }else{
-                    nodes[count].x = Integer.parseInt(split[1]);
-                    nodes[count].y = Integer.parseInt(split[2]);
+                    nodes[count].setX(Integer.parseInt(split[1]));
+                    nodes[count].setY(Integer.parseInt(split[2]));
                 }
                 //System.out.println("Line:" + currentLine);
                 //System.out.println(nodes[count].x + " " + nodes[count].y );
@@ -80,7 +88,7 @@ class Init{
             split = currentLine.split(" ");
             count = 0;
             while(!(split[0].equals("DEPOT_SECTION"))){
-                nodes[count].demand =  Integer.parseInt(split[1]);
+                nodes[count].setDemand(Integer.parseInt(split[1]));
                 //System.out.println("Line:" + currentLine);
                 //System.out.println(nodes[count].demand);
                 currentLine = br.readLine();
@@ -104,7 +112,6 @@ class Init{
 			}
 		}
     }
-
     public static void init_distance(){
         for(int i = 0; i<nodes.length; i++){
             nodes[i].distances = new int[max_nodes];
@@ -113,13 +120,5 @@ class Init{
                 //System.out.println(nodes[i].distances[j]);
             }
         }
-    }
-
-    public static void main(String args[]){
-        ReadFile("/home/gustavo/Documents/EP-IA/A-n32-k5.vrp");
-        for(int i = 0; i<nodes.length; i++){
-            System.out.println("Coordinates:" + nodes[i].x + nodes[i].y );
-        }
-        //init_distance();
     }
 }
