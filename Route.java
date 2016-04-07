@@ -79,7 +79,8 @@ public class Route{
         for (int i = 0; i < routeSize(); i++) {
             geneString += getNode(i)+ " " +"=>";
         }
-        geneString += "Size: " + routeSize();
+        //geneString += " Size: " + routeSize() + " " + capacity;
+        geneString += " 0";
         return geneString;
     }
 }

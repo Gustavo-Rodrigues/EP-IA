@@ -18,6 +18,7 @@ public class Set{
 
     //contructs the nodes
     public Set(Node nodes[], int capacity){
+        //for(int i = 0; i<nodes.length;i++) System.out.println(nodes[i]);
         this.nodes = new ArrayList<Node>(Arrays.asList(nodes));
         this.capacity = capacity;
     }
@@ -40,25 +41,23 @@ public class Set{
         ArrayList<Node> cNodes = new ArrayList<Node>(nodes);
         Random random = new Random();
         Route route = new Route();
-        int randomPosition = 1;
-        //System.out.println(cNodes.size());
+        int randomPosition = random.nextInt(cNodes.size());
         while(cNodes.size() > 0){
-            System.out.println(cNodes.size());
             //raffle the position
             randomPosition = random.nextInt(cNodes.size());
-            //System.out.println("ID: " +cNodes.get(randomPosition));
             if(route.getCapacity() + cNodes.get(randomPosition).getDemand() <= capacity){
                 //adds the node to the route
-                System.out.println("NODE: "+ cNodes.get(randomPosition));
                 route.addNode(cNodes.get(randomPosition));
                 route.addLoad(cNodes.get(randomPosition).getDemand());
                 //remove the node from the nodes
                 cNodes.remove(randomPosition);
+
             }else{
                 addRoute(route);
                 route = new Route();
             }
         }
+        addRoute(route);
     }
 
     //get the number of routes in our set
