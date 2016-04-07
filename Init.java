@@ -67,14 +67,16 @@ class Init{
             int count = 0;
             while(!(split[0].equals("DEMAND_SECTION"))){
                 if(split.length == 4){
+                    nodes[count].setId(Integer.parseInt(split[1]));
                     nodes[count].setX(Integer.parseInt(split[2]));
                     nodes[count].setY(Integer.parseInt(split[3]));
                 }else{
+                    nodes[count].setId(Integer.parseInt(split[0]));
                     nodes[count].setX(Integer.parseInt(split[1]));
                     nodes[count].setY(Integer.parseInt(split[2]));
                 }
                 //System.out.println("Line:" + currentLine);
-                //System.out.println(nodes[count].x + " " + nodes[count].y );
+                //System.out.println("Id: " +nodes[count].getId() + " " + "X: " + nodes[count].getX() + " " + "Y: " + nodes[count].getY() );
                 currentLine = br.readLine();
                 split = currentLine.split(" ");
                 count++;
@@ -112,11 +114,12 @@ class Init{
 			}
 		}
     }
-    public static void init_distance(){
+    public void init_distance(){
         for(int i = 0; i<nodes.length; i++){
             nodes[i].distances = new int[max_nodes];
             for(int j = 0; j<nodes.length; j++){
-                nodes[i].distances[j] = (int) Math.round(Math.sqrt(Math.pow((nodes[i].x - nodes[j].x), 2) + Math.pow((nodes[i].y - nodes[j].y), 2)));
+                nodes[i].distances[j] = (int) Math.round(Math.sqrt(Math.pow((nodes[i].getX() - nodes[j].getX()), 2) +
+                Math.pow((nodes[i].getY() - nodes[j].getY()), 2)));
                 //System.out.println(nodes[i].distances[j]);
             }
         }

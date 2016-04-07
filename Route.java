@@ -8,13 +8,16 @@ public class Route{
     private ArrayList<Node> route = new ArrayList<Node>();
     //Cache
     private int distance = 0;
+    //maximum capacity
+    //private int maxCapacity;
     //capacity
-    private int capacity;
+    private int capacity = 0;
 
-    //add a node into the route
-    public void addNode(Node node){
-        route.add(node);
+    /*
+    public Route(int maxCapacity){
+        this.maxCapacity = maxCapacity;
     }
+    */
 
     // Gets a node from the route
     public Node getNode(int nodePosition) {
@@ -39,23 +42,44 @@ public class Route{
                 destinationNode = getNode(0);
             }
             // Get the distance between the two nodes
-            routeDistance += fromNode.distanceTo(destinationNode);
+            routeDistance += fromNode.distanceTo(destinationNode.getId());
         }
         distance = routeDistance;
         return distance;
     }
 
-    // Get number of nodes on our tour
+    //get the current capacity
+    public int getCapacity(){
+        return capacity;
+    }
+
+    //get the route
+    public ArrayList<Node> getRoute(){
+        return route;
+    }
+
+    //add load to the capacity
+    public void addLoad(int load){
+        this.capacity += load;
+    }
+
+    //add a node into the route
+    public void addNode(Node node){
+        route.add(node);
+    }
+
+    // Get number of nodes on our route
     public int routeSize() {
         return route.size();
     }
 
     @Override
     public String toString() {
-        String geneString = "|";
+        String geneString = "";
         for (int i = 0; i < routeSize(); i++) {
-            geneString += getNode(i)+"|";
+            geneString += getNode(i)+ " " +"=>";
         }
+        geneString += "Size: " + routeSize();
         return geneString;
     }
 }

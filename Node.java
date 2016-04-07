@@ -3,14 +3,20 @@ class Node{
     private int x;
     private int y;
     private int demand;
-    private int[] distances;
+    //a little bit of lazyness
+    public int[] distances;
 
     @Override
     public String toString(){
-        return "X: " + getX() + " Y: " + getY();
+        return " "+ id;
     }
 
+
+
     //getters
+    public int getId(){
+        return id;
+    }
     public int getX(){
         return x;
     }
@@ -22,6 +28,9 @@ class Node{
     }
 
     //setters
+    public void setId(int id){
+        this.id = id;
+    }
     public void setX(int x){
         this.x = x;
     }
