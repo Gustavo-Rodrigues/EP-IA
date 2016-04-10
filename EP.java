@@ -20,8 +20,5 @@ class EP{
         System.out.println(set);
         SimulatedAnnealingCase1 sa1 = new SimulatedAnnealingCase1();
         sa1.simulatedAnnealing(set);
-        /*TODO
-            - quando estou dando get na rota eu estou pegando o objeto, é necessário pegar a cópia dele.
-        */
     }
 }
