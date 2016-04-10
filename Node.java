@@ -8,10 +8,8 @@ class Node{
 
     @Override
     public String toString(){
-        return " "+ id;
+        return " "+ (id-1);
     }
-
-
 
     //getters
     public int getId(){
@@ -26,6 +24,18 @@ class Node{
     public int getDemand(){
         return demand;
     }
+    public int[] getDistances(){
+        return distances;
+    }
+    public Node copyNode(){
+        Node newNode = new Node();
+        newNode.setId(getId());
+        newNode.setX(getX());
+        newNode.setY(getY());
+        newNode.setDemand(getDemand());
+        newNode.setDistances(getDistances());
+        return newNode;
+    }
 
     //setters
     public void setId(int id){
@@ -39,6 +49,9 @@ class Node{
     }
     public void setDemand(int demand){
         this.demand = demand;
+    }
+    public void setDistances(int []distances){
+        this.distances = distances;
     }
 
     //calculate the distance from one node to another

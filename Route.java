@@ -21,41 +21,74 @@ public class Route{
 
     // Gets a node from the route
     public Node getNode(int nodePosition) {
-        return route.get(nodePosition);
+        return route.get(nodePosition).copyNode();
     }
 
     // Gets the total distance of the route
     public int getDistance(){
         int routeDistance = 0;
+        Node currentNode;
         // Loop through the Nodes
-        for (int nodeIndex=0; nodeIndex < routeSize(); nodeIndex++) {
-            // Get node we're traveling from
-            Node fromNode = getNode(nodeIndex);
-            // node we're traveling to
-            Node destinationNode;
-            // Check we're not on our route's last node, if we are set our
-            // route's final destination city to our starting city
-            if(nodeIndex+1 < routeSize()){
-                destinationNode= getNode(nodeIndex+1);
-            }
-            else{
-                destinationNode = getNode(0);
-            }
-            // Get the distance between the two nodes
-            routeDistance += fromNode.distanceTo(destinationNode.getId());
+        int nodeIndex;
+        for (nodeIndex=0; nodeIndex < routeSize()-1; nodeIndex++) {
+            currentNode = getNode(nodeIndex);
+            //System.out.println(currentNode.getId());
+            //System.out.println(getNode(nodeIndex+1).getId());
+            routeDistance += currentNode.distanceTo(getNode(nodeIndex+1).getId()-1);
+            //System.out.println(routeDistance);
         }
-        distance = routeDistance;
-        return distance;
+        currentNode = getNode(nodeIndex);
+        routeDistance += currentNode.distanceTo(0);
+        //System.out.println(routeDistance);
+        return routeDistance;
     }
 
     //get the current capacity
     public int getCapacity(){
+        /*
+        int routeCapacity = 0;
+        Node currentNode;
+        // Loop through the Nodes
+        int nodeIndex;
+        for (nodeIndex=0; nodeIndex < routeSize()-1; nodeIndex++) {
+            currentNode = getNode(nodeIndex);
+            //System.out.println(currentNode.getId());
+            //System.out.println(getNode(nodeIndex+1).getId());
+            routeCapacity += currentNode.getDemand();
+            //System.out.println(routeDistance);
+        }*/
+        //System.out.println(routeDistance);
         return capacity;
     }
 
     //get the route
     public ArrayList<Node> getRoute(){
-        return route;
+        ArrayList<Node> newList = new ArrayList<Node>(route);
+        return newList;
+    }
+
+    public Route copyRoute(){
+        Route newRoute = new Route();
+        newRoute.setRoute(getRoute());
+        newRoute.setDistance(getDistance());
+        newRoute.setCapacity(getCapacity());
+        return newRoute;
+    }
+
+    public void setRoute(ArrayList<Node> route){
+        this.route = route;
+    }
+
+    public void setDistance(int distance){
+        this.distance = distance;
+    }
+
+    public void setCapacity(int capacity){
+        this.capacity = capacity;
+    }
+
+    public void setNode(int index, Node node){
+        route.set(index,node);
     }
 
     //add load to the capacity
@@ -79,8 +112,8 @@ public class Route{
         for (int i = 0; i < routeSize(); i++) {
             geneString += getNode(i)+ " " +"=>";
         }
-        //geneString += " Size: " + routeSize() + " " + capacity;
         geneString += " 0";
+        geneString += " " + "Cost: " + getDistance();
         return geneString;
     }
 }

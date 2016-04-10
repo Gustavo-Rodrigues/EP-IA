@@ -25,6 +25,10 @@ class Init{
         return capacity;
     }
 
+    public int getMaxNodes(){
+        return max_nodes;
+    }
+
     public Init(String file){
         BufferedReader br = null;
 		try {

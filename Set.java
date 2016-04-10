@@ -15,6 +15,7 @@ public class Set{
     //capacity of each vehicle
     private int capacity;
 
+    public Set(){};
 
     //contructs the nodes
     public Set(Node nodes[], int capacity){
@@ -23,16 +24,79 @@ public class Set{
         this.capacity = capacity;
     }
 
+    public Set(ArrayList<Route> set, int totalDistance, ArrayList<Node> nodes, int capacity){
+        this.set = set;
+        this.totalDistance = totalDistance;
+        this.nodes = nodes;
+        this.capacity = capacity;
+    }
+
+    public Set(Set aSet){
+        this(aSet.getSet(), aSet.getDistance(), aSet.getNodes(), aSet.getMaximumCapacity());
+    }
+
+    public Set copySet(){
+        Set newSet = new Set();
+        newSet.setSet(getSet());
+        newSet.setTotalDistance(getDistance());
+        newSet.setCapacity(getMaximumCapacity());
+        return newSet;
+    }
+
+
+    public ArrayList<Node> getNodes(){
+        return nodes;
+    }
+
+    public int getMaximumCapacity(){
+        return capacity;
+    }
+
+    //get the instance
+    public Set getInstance(){
+        return this;
+    }
+
+    //get the set
     public ArrayList<Route> getSet(){
-        return set;
+        ArrayList<Route> newList = new ArrayList<Route>(set);
+        return newList;
     }
 
+    //get the route
     public Route getRoute(int index){
-        return set.get(index);
+        return set.get(index).copyRoute();
     }
 
+    public int getDistance(){
+        int temp  = 0;
+        for(int i = 0; i<setSize();i++){
+            //System.out.println("Route distance: " + getRoute(i).getDistance());
+            temp += getRoute(i).getDistance();
+        }
+        totalDistance = temp;
+        return totalDistance;
+    }
+
+    //adds a route
     public void addRoute(Route route){
         set.add(route);
+    }
+
+    public void setRoute(int index, Route route){
+        set.set(index,route);
+    }
+
+    public void setSet(ArrayList<Route> set){
+        this.set = set;
+    }
+
+    public void setTotalDistance(int totalDistance){
+        this.totalDistance = totalDistance;
+    }
+
+    public void setCapacity(int capacity){
+        this.capacity = capacity;
     }
 
     //create a set of routes in which the routes are created randomically accordingly to the limit of capacity
@@ -51,7 +115,6 @@ public class Set{
                 route.addLoad(cNodes.get(randomPosition).getDemand());
                 //remove the node from the nodes
                 cNodes.remove(randomPosition);
-
             }else{
                 addRoute(route);
                 route = new Route();
