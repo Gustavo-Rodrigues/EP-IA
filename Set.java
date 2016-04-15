@@ -12,6 +12,8 @@ public class Set{
     private int totalDistance = 0;
     //nodes
     private ArrayList<Node> nodes;
+    //distances
+    private int dist[][];
     //capacity of each vehicle
     private int capacity;
 
@@ -22,6 +24,12 @@ public class Set{
         //for(int i = 0; i<nodes.length;i++) System.out.println(nodes[i]);
         this.nodes = new ArrayList<Node>(Arrays.asList(nodes));
         this.capacity = capacity;
+        dist = new int[nodes.length][nodes.length];
+        for(int i = 0; i<nodes.length; i++){
+            for(int j = 0; j< nodes.length; j++){
+                dist[i][j] = nodes[i].getDistances()[j];
+            }
+        }
     }
 
     public Set(ArrayList<Route> set, int totalDistance, ArrayList<Node> nodes, int capacity){
@@ -98,6 +106,139 @@ public class Set{
     public void setCapacity(int capacity){
         this.capacity = capacity;
     }
+
+    public void clarkeWright(){
+        ArrayList<Saving> savings  = computeSaving();
+        Collections.sort(savings);
+        //System.out.println(savings);
+        int count = 0;
+        int found = 0;
+        while(savings.size()>0){
+            //search in the set if there is any node from the savings already on a route
+            //System.out.println("------------------------>:"+ (savings.get(0).getFrom().getId()-1) + " "+ (savings.get(0).getTo().getId()-1));
+            found = 0;
+            int fromRoute = 0;
+            int toRoute = 0;
+            int position = 0;
+            boolean isInternal = false;
+            int which = -1;
+            for(int i = 0; i<setSize(); i++){
+                for(int j = 0; j<set.get(i).routeSize(); j++){
+                    if(set.get(i).getNode(j).getId() == savings.get(0).getFrom().getId()){
+                        found++;
+                        fromRoute = i;
+                        if(set.get(i).getCapacity() + savings.get(0).getTo().getDemand() <= capacity) position = j;
+                        which = 1;
+                        if(position+1 == set.get(i).routeSize() || position-1 != 0 ) isInternal = true; //there is no 0 at the end
+                        //System.out.println(savings.get(0).getValue() + " " + (savings.get(0).getFrom().getId()-1) + " "+ position);
+                    }else if(set.get(i).getNode(j).getId() == savings.get(0).getTo().getId()){
+                        found++;
+                        toRoute = i;
+                        if(set.get(i).getCapacity() + savings.get(0).getFrom().getDemand() <= capacity) position = j;
+                        which = 0;
+                        if(position-1 != 0 || position+1 == set.get(i).routeSize()) isInternal = true;
+                        //System.out.println(savings.get(0).getValue() + " " + (savings.get(0).getTo().getId()-1) + " "+ position);
+                    }
+                }
+                //System.out.println(set);
+                if(found == 2) break;
+            }
+
+            if(found == 0){
+                if(savings.get(0).getFrom().getDemand() + savings.get(0).getTo().getDemand() <= capacity){
+                    Route newRoute = new Route();
+                    newRoute.addNode(nodes.get(0));
+                    newRoute.addNode(savings.get(0).getFrom());
+                    newRoute.addNode(savings.get(0).getTo());
+                    addRoute(newRoute);
+                }
+            }
+            //System.out.println("POSITION:"+ position + " " + "FOUND:" + found + " "+ "INTERNAL:"  + isInternal);
+            if(found == 1 && !isInternal){
+                //System.out.println("OHH");
+                if(which == 1 && set.get(fromRoute).getCapacity() + savings.get(0).getTo().getDemand() <= capacity){
+                    //System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+                    //System.out.println(position + " f:"+  fromRoute + " t:"+ toRoute);
+                    if(position - 1 == 0){
+                        set.get(fromRoute).addNode(position,savings.get(0).getTo());
+                    }else set.get(fromRoute).addNode(position+1,savings.get(0).getTo());
+                }else if(which == 0 && set.get(toRoute).getCapacity() + savings.get(0).getFrom().getDemand() <= capacity){
+                    //System.out.println(position + " f:"+  fromRoute + " t:"+ toRoute);
+                    //System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+                    //System.out.println(position);
+                    if(position - 1 == 0){
+                        set.get(toRoute).addNode(position,savings.get(0).getFrom());
+                    } else set.get(toRoute).addNode(position+1,savings.get(0).getFrom());
+                }
+            }
+
+            if(found == 2 && fromRoute != toRoute && !isInternal && set.get(fromRoute).getCapacity() + set.get(toRoute).getCapacity() <= capacity){
+                ArrayList<Node> merge = new ArrayList<Node>(set.get(fromRoute).getRoute());
+                ArrayList<Node> temp = new ArrayList<Node>(set.get(toRoute).getRoute());
+                temp.remove(0);
+                merge.addAll(temp);
+                Route mergedRoute = new Route();
+                mergedRoute.setRoute(merge);
+
+                /*
+                String geneString = "";
+                for (int i = 0; i < setSize(); i++) {
+                    geneString += getRoute(i) + "\n";
+                }
+                System.out.println(geneString);
+
+                System.out.println("FROM ROUTE:" + fromRoute + " " + "TO ROUTE:" +toRoute);
+                */
+                set.remove(fromRoute);
+                set.remove(toRoute-1);
+                set.add(mergedRoute);
+                //break;
+            }
+            savings.remove(0);
+        }
+
+        ArrayList<Node> checkNodes = new ArrayList<Node>(nodes);
+        for(int i = 0; i<setSize(); i++){
+            for(int j = 0; j<set.get(i).routeSize(); j++){
+                for(int k = 0; k<checkNodes.size(); k++){
+                    if(set.get(i).getNode(j).getId() == checkNodes.get(k).getId()){
+                        checkNodes.remove(k);
+                        i = 0;
+                        j = 0;
+                        k = 0;
+                        break;
+                    }
+                }
+            }
+        }
+        System.out.println(checkNodes);
+        while(checkNodes.size()>0){
+            Route newRoute = new Route();
+            ArrayList<Node> insertNodes = new ArrayList<Node>();
+            insertNodes.add(nodes.get(0));
+            insertNodes.add(checkNodes.get(0));
+            newRoute.setRoute(insertNodes);
+            set.add(newRoute);
+            checkNodes.remove(0);
+        }
+        System.out.println(checkNodes);
+
+    }
+    public ArrayList<Saving> computeSaving(){
+		int sav[][] = new int[nodes.size()][nodes.size()];
+		ArrayList<Saving> sList = new ArrayList<Saving>();
+		for(int i=1;i<dist.length;i++){
+			for(int j=i+1;j<dist.length;j++){
+				sav[i][j] = dist[0][i] + dist[j][0] - dist[i][j];
+				Node n1 = nodes.get(i).copyNode();
+				Node n2 = nodes.get(j).copyNode();
+				Saving s = new Saving(sav[i][j],n1, n2);
+				sList.add(s);
+			}
+		}
+        //System.out.println(sList);
+		return sList;
+	}
 
     //create a set of routes in which the routes are created randomically accordingly to the limit of capacity
     public void createSet(){

@@ -45,7 +45,6 @@ public class Route{
 
     //get the current capacity
     public int getCapacity(){
-        /*
         int routeCapacity = 0;
         Node currentNode;
         // Loop through the Nodes
@@ -56,8 +55,11 @@ public class Route{
             //System.out.println(getNode(nodeIndex+1).getId());
             routeCapacity += currentNode.getDemand();
             //System.out.println(routeDistance);
-        }*/
+        }
         //System.out.println(routeDistance);
+        currentNode = getNode(nodeIndex);
+        routeCapacity += currentNode.getDemand();
+        capacity = routeCapacity;
         return capacity;
     }
 
@@ -101,6 +103,10 @@ public class Route{
         route.add(node);
     }
 
+    public void addNode(int index,Node node){
+        route.add(index,node);
+    }
+
     // Get number of nodes on our route
     public int routeSize() {
         return route.size();
@@ -114,6 +120,7 @@ public class Route{
         }
         geneString += " 0";
         geneString += " " + "Cost: " + getDistance();
+        geneString += " " + "Capacity: " + getCapacity();
         return geneString;
     }
 }
