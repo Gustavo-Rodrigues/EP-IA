@@ -55,7 +55,7 @@ class Node{
     }
 
     //calculate the distance from one node to another
-    public double distanceTo(int destination){
+    public int distanceTo(int destination){
         return distances[destination];
     }
 }

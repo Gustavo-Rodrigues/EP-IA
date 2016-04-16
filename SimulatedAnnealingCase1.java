@@ -18,7 +18,6 @@ class SimulatedAnnealingCase1{
         // Get tour size
         Route route = r.copyRoute();
         int size = r.routeSize();
-        // repeat until no improvement is made
         int minI = -1;
         int minJ = -1;
         int minChange = 0;
@@ -29,19 +28,29 @@ class SimulatedAnnealingCase1{
                 // route 1: dist(i,j) + dist(i+1,j+1)
                 // route 2: dist(i,i+1) - dist(j,j+1)
                 //if(j+1 > size || i+1 > size) break;
-                Route route1 = new Route();
-                route1.addNode(r.getNode(i));
-                route1.addNode(r.getNode(j));
-                route1.addNode(r.getNode(i+1));
-                route1.addNode(r.getNode(j+1));
 
-                Route route2 = new Route();
-                route2.addNode(r.getNode(i));
-                route2.addNode(r.getNode(i+1));
-                route2.addNode(r.getNode(j));
-                route2.addNode(r.getNode(j+1));
+                //Route route1 = new Route();
+                //route1.addNode(r.getNode(i));
+                //route1.addNode(r.getNode(j));
+                //route1.addNode(r.getNode(i+1));
+                //route1.addNode(r.getNode(j+1));
 
-                int better = route1.getDistance() - route2.getDistance();
+                //int distance1 = r.getNode(i).distanceTo(r.getNode(j).getId()-1) +
+                //r.getNode(j).distanceTo(r.getNode(i+1).getId()-1) + r.getNode(i+1).distanceTo(r.getNode(j+1).getId()-1);
+                int distance1 = r.getNode(i).distanceTo(r.getNode(j).getId()-1) + r.getNode(i+1).distanceTo(r.getNode(j+1).getId()-1);
+
+                //Route route2 = new Route();
+                //route2.addNode(r.getNode(i));
+                //route2.addNode(r.getNode(i+1));
+                //route2.addNode(r.getNode(j));
+                //route2.addNode(r.getNode(j+1));
+
+                //int distance2 = r.getNode(i).distanceTo(r.getNode(i+1).getId()-1) +
+                //r.getNode(i+1).distanceTo(r.getNode(j).getId()-1) + r.getNode(j).distanceTo(r.getNode(j+1).getId()-1);
+                int distance2 = r.getNode(i).distanceTo(r.getNode(i+1).getId()-1) + r.getNode(j).distanceTo(r.getNode(j+1).getId()-1);
+
+                //int better = route1.getDistance() - route2.getDistance();
+                int better = distance1 - distance2;
                 if ( better < minChange){
                     minChange = better;
                     minI = i;
@@ -57,13 +66,65 @@ class SimulatedAnnealingCase1{
         }
         return route;
     }
-    /*
-    public Route twoOpt(Set set){
+
+    public Set twoOpt(Set set){
         Set newSet = set.copySet();
+        int setSize = newSet.setSize();
+        int minRoute1 = -1;
+        int minRoute2 = -1;
+        int minI = -1;
+        int minJ = -1;
+        int minChange = 0;
+        for(int g = 0; g<setSize; g++ ){
+            for(int h = g+1; h<setSize; h++){
+                for ( int i = 1; i < set.getRoute(g).routeSize()-1; i++ ){
+                    //if(i+1 > size) break;
+                    for ( int j = 1; j<set.getRoute(h).routeSize()-1; j++) {
+                        // g = k
+                        // h = k'
+                        // route 1: dist(i k,j+1 k') + dist(j k',i+1 k)
+                        // route 2: dist(i k,i+1 k) - dist(j k',j+1 k')
+                        //if(j+1 > size || i+1 > size) break;
 
+                        int distance1 =
+                        set.getRoute(g).getNode(i).distanceTo(set.getRoute(h).getNode(j+1).getId()-1) +
+                        set.getRoute(h).getNode(j).distanceTo(set.getRoute(g).getNode(i+1).getId()-1);
+
+                        int distance2 =
+                        set.getRoute(g).getNode(i).distanceTo(set.getRoute(g).getNode(i+1).getId()-1) +
+                        set.getRoute(h).getNode(j).distanceTo(set.getRoute(h).getNode(j+1).getId()-1);
+
+                        int better = distance1 - distance2;
+                        if ( better < minChange){
+                            if(set.getRoute(g).getCapacity() - set.getRoute(g).getNode(i+1).getDemand() + set.getRoute(h).getNode(j+1).getDemand() <
+                            set.getMaximumCapacity() &&
+                            set.getRoute(h).getCapacity() - set.getRoute(h).getNode(j+1).getDemand() + set.getRoute(g).getNode(i+1).getDemand() <
+                            set.getMaximumCapacity()){
+                                //it's feasible UHUUU
+                                minChange = better;
+                                minRoute1 = g;
+                                minRoute2 = h;
+                                minI = i;
+                                minJ = j;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(minI != -1 && minJ != -1 && minRoute1 != -1 && minRoute2 != -1){
+            Route route1 = newSet.getRoute(minRoute1);
+            Route route2 = newSet.getRoute(minRoute2);
+            route1.addNode(minI+1,route2.getNode(minJ+1));
+            route2.addNode(minJ+1,route1.getNode(minI+1+1));
+            route1.removeNode(minI+2);
+            route2.removeNode(minJ+2);
+
+            newSet.setRoute(minRoute1, route1);
+            newSet.setRoute(minRoute2, route2);
+        }
+        return newSet;
     }
-    */
-
 
     public void simulatedAnnealing(Set set, double temperature, double coolingRate, int maxIter){
         System.out.println("Starting");
@@ -72,7 +133,6 @@ class SimulatedAnnealingCase1{
         System.out.println("Initial solution distance: " + currentSolution.getDistance());
 
         // Set as current best
-        Set overallBest = currentSolution.copySet();
         Set best = currentSolution.copySet();
         System.out.println(best);
         int improvement = Integer.MAX_VALUE;
@@ -86,7 +146,7 @@ class SimulatedAnnealingCase1{
             int iter = 0;
             while(iter < maxIter){
                 r = Math.random();
-                if(newSolution.getDistance() < improvement && temperature != 1000) improvement = newSolution.getDistance();
+                //if(newSolution.getDistance() < improvement && temperature != 1000) improvement = newSolution.getDistance();
                 //System.out.println(newSolution.getDistance());
                 //System.out.println(newSolution);
                 if(r<=(double) (1.0/3.0)){
@@ -184,31 +244,36 @@ class SimulatedAnnealingCase1{
                             if(case1.getDistance() < case2.getDistance()){
                                 newSolution.setRoute(setPos1,case1);
                             }else newSolution.setRoute(setPos1,case2);
-
                             validSolution = true;
                         }
                     }
+                    /*
+                    for(int i = 0; i<newSolution.setSize();i++){
+                        Route routeX = newSolution.getRoute(i);
+                        Route omegaRoute = twoOpt(routeX);
+                        if(omegaRoute.getDistance() < routeX.getDistance()){
+                            newSolution.setRoute(i,omegaRoute);
+                        }
+                    }
+                    */
                 }
                 //System.out.println(newSolution);
+                newSolution = twoOpt(newSolution);
                 // Get energy of solutions
                 int currentEnergy = currentSolution.getDistance();
                 int neighbourEnergy = newSolution.getDistance();
                 //System.out.println("CURRENT ENERGY: " +currentEnergy );
                 //System.out.println("NEIGHBOUR ENERGY: " +neighbourEnergy );
                 //solutions.add(neighbourEnergy);
-
-                // Decide if we should accept the neighbour
-                if (acceptanceProbability(currentEnergy, neighbourEnergy, temperature) > Math.random()) {
-                    currentSolution = newSolution.copySet();
-                }
                 // Keep track of the best solution found
                 if (currentSolution.getDistance() < best.getDistance()) {
                     best = currentSolution.copySet();
-                    if(best.getDistance() < overallBest.getDistance()){
-                        overallBest = best.copySet();
-                    }
                     //System.out.println(best);
                     //System.out.println(best.getDistance());
+                }
+                // Decide if we should accept the neighbour
+                if (acceptanceProbability(currentEnergy, neighbourEnergy, temperature) > Math.random()) {
+                    currentSolution = newSolution.copySet();
                 }
                 iter++;
             }
@@ -216,10 +281,10 @@ class SimulatedAnnealingCase1{
             temperature *= 1-coolingRate;
             //Perform Local search based on swap operation on X best
             //2-opt
-
+            //currentSolution = twoOpt(best);
         }
-    System.out.println(overallBest);
-    System.out.println(overallBest.getDistance());
-    System.out.println(improvement);
+    System.out.println(best);
+    System.out.println(best.getDistance());
+    //System.out.println(improvement);
     }
 }
