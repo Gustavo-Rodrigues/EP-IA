@@ -106,7 +106,9 @@ public class Route{
     public void addNode(int index,Node node){
         route.add(index,node);
     }
-
+    public void removeNode(int index){
+        route.remove(index);
+    }
     // Get number of nodes on our route
     public int routeSize() {
         return route.size();

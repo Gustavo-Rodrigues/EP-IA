@@ -53,7 +53,8 @@ public class Set{
 
 
     public ArrayList<Node> getNodes(){
-        return nodes;
+        ArrayList<Node> n = new ArrayList<Node>(nodes);
+        return n;
     }
 
     public int getMaximumCapacity(){
@@ -89,6 +90,9 @@ public class Set{
     //adds a route
     public void addRoute(Route route){
         set.add(route);
+    }
+    public void removeRoute(int index){
+        set.remove(index);
     }
 
     public void setRoute(int index, Route route){

@@ -1,7 +1,7 @@
 class EP{
     public static void main(String args[]){
         //reads the file and get some information
-        Init initialize = new Init("/home/gustavo/Documents/EP-IA/P-n16-k8.vrp");
+        Init initialize = new Init("/home/gustavo/Documents/EP-IA/A-n32-k5.vrp");
         initialize.init_distance();
         Node nodes[];
         nodes = initialize.getNodes();
@@ -22,7 +22,7 @@ class EP{
         //set.createSet();
         set.clarkeWright();
         System.out.println(set);
-        //SimulatedAnnealingCase1 sa1 = new SimulatedAnnealingCase1();
-        //sa1.simulatedAnnealing(set);
+        SimulatedAnnealingCase1 sa1 = new SimulatedAnnealingCase1();
+        sa1.simulatedAnnealing(set,1000,0.03,5000);
     }
 }
