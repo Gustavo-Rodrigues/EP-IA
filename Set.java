@@ -175,7 +175,6 @@ public class Set{
                     } else set.get(toRoute).addNode(position+1,savings.get(0).getFrom());
                 }
             }
-
             if(found == 2 && fromRoute != toRoute && !isInternal && set.get(fromRoute).getCapacity() + set.get(toRoute).getCapacity() <= capacity){
                 ArrayList<Node> merge = new ArrayList<Node>(set.get(fromRoute).getRoute());
                 ArrayList<Node> temp = new ArrayList<Node>(set.get(toRoute).getRoute());
@@ -193,8 +192,14 @@ public class Set{
 
                 System.out.println("FROM ROUTE:" + fromRoute + " " + "TO ROUTE:" +toRoute);
                 */
-                set.remove(fromRoute);
-                set.remove(toRoute-1);
+                if(toRoute > fromRoute){
+                    set.remove(fromRoute);
+                    set.remove(toRoute-1);
+                }else{
+                    set.remove(toRoute);
+                    set.remove(fromRoute-1);
+                }
+
                 set.add(mergedRoute);
                 //break;
             }

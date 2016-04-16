@@ -1,7 +1,7 @@
 class EP{
     public static void main(String args[]){
         //reads the file and get some information
-        Init initialize = new Init("/home/gustavo/Documents/EP-IA/A-n32-k5.vrp");
+        Init initialize = new Init("/home/gustavo/Documents/EP-IA/A-n33-k5.vrp");
         initialize.init_distance();
         Node nodes[];
         nodes = initialize.getNodes();

@@ -49,7 +49,6 @@ class SimulatedAnnealingCase1{
                 }
             }
         }
-        //pos , node
         if(minI != -1 && minJ != -1){
             route.addNode(minI+1,r.getNode(minJ));
             route.addNode(minI+1+1,r.getNode(minJ+1));
@@ -58,6 +57,12 @@ class SimulatedAnnealingCase1{
         }
         return route;
     }
+    /*
+    public Route twoOpt(Set set){
+        Set newSet = set.copySet();
+
+    }
+    */
 
 
     public void simulatedAnnealing(Set set, double temperature, double coolingRate, int maxIter){
