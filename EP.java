@@ -1,10 +1,11 @@
 class EP{
     public static void main(String args[]){
         //reads the file and get some information
-        Init initialize = new Init("/home/gustavo/Documents/EP-IA/A-n32-k5.vrp");
+        Init initialize = new Init("/home/gustavo/Documents/EP-IA/P-n16-k8.vrp");
         initialize.init_distance();
         Node nodes[];
         nodes = initialize.getNodes();
+        /*
         System.out.println("DEMANDS:");
         for(int x = 0;x<initialize.getMaxNodes();x++){
             System.out.println(x + ": " + nodes[x].getDemand());
@@ -18,11 +19,12 @@ class EP{
             }
             System.out.println();
         }
+        */
         Set set = new Set(initialize.getNodes(), initialize.getCapacity());
         //set.createSet();
         set.clarkeWright();
         System.out.println(set);
-        SimulatedAnnealingCase1 sa1 = new SimulatedAnnealingCase1();
-        sa1.simulatedAnnealing(set,100,0.01,500);
+        SimulatedAnnealing sa1 = new SimulatedAnnealing();
+        sa1.simulatedAnnealing(set,100,0.01,2500);
     }
 }
