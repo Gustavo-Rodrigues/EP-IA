@@ -4,7 +4,7 @@ import java.lang.Math;
 import java.util.Scanner;
 
 
-class SimulatedAnnealingCase1{
+class SimulatedAnnealing{
     public double acceptanceProbability(int energy, int newEnergy, double temperature){
         // If the new solution is better, accept it
         if (newEnergy < energy) {
