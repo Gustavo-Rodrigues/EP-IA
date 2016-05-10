@@ -1,5 +1,7 @@
 class EP{
     public static void main(String args[]){
+        Stopwatch s = new Stopwatch();
+		s.start();
         //reads the file and get some information
         Init initialize = new Init("/home/gustavo/Documents/EP-IA/P-n16-k8.vrp");
         initialize.init_distance();
@@ -26,5 +28,7 @@ class EP{
         System.out.println(set);
         SimulatedAnnealing sa1 = new SimulatedAnnealing();
         sa1.simulatedAnnealing(set,100,0.01,2500);
+        s.stop();
+		System.out.println(s.toString());
     }
 }
