@@ -29,6 +29,7 @@ class Init{
         return max_nodes;
     }
 
+    //reads the file and creates nodes
     public Init(String file){
         BufferedReader br = null;
 		try {
@@ -36,11 +37,9 @@ class Init{
 			br = new BufferedReader(new FileReader(file));
 
             currentLine = br.readLine();
-            //System.out.println(currentLine);
             String split[] = currentLine.split(" ");
             //read the header
             while(!(split[0].equals("NODE_COORD_SECTION"))){
-                //System.out.println(currentLine);
                 if(split[0].equals("DIMENSION")) max_nodes = Integer.parseInt(split[2]);
                 if(split[0].equals("CAPACITY")) capacity = Integer.parseInt(split[2]);
                 currentLine = br.readLine();
@@ -51,18 +50,6 @@ class Init{
             for(int h = 0; h<nodes.length; h++){
                 nodes[h] = new Node();
             }
-
-            //System.out.println("DIMENSION:" + max_nodes + "\nCAPACITY: " + capacity);
-
-            //System.out.println(currentLine);
-
-            /*
-            split = currentLine.split(" ");
-            for(int i = 0; i<split.length; i++){
-                System.out.println(split[i]);
-            }
-            System.out.println("Length:"+split.length);
-            */
 
             currentLine = br.readLine();
             //read the nodes
@@ -79,15 +66,10 @@ class Init{
                     nodes[count].setX(Integer.parseInt(split[1]));
                     nodes[count].setY(Integer.parseInt(split[2]));
                 }
-                //System.out.println("Line:" + currentLine);
-                //System.out.println("Id: " +nodes[count].getId() + " " + "X: " + nodes[count].getX() + " " + "Y: " + nodes[count].getY() );
                 currentLine = br.readLine();
                 split = currentLine.split(" ");
                 count++;
-                //System.out.println(count);
             }
-
-
 
             currentLine = br.readLine();
             //read the demand section
@@ -95,8 +77,6 @@ class Init{
             count = 0;
             while(!(split[0].equals("DEPOT_SECTION"))){
                 nodes[count].setDemand(Integer.parseInt(split[1]));
-                //System.out.println("Line:" + currentLine);
-                //System.out.println(nodes[count].demand);
                 currentLine = br.readLine();
                 split = currentLine.split(" ");
                 count++;
@@ -106,8 +86,6 @@ class Init{
             //read the depot section
             currentLine = br.readLine();
             depot = nodes[0];
-            //System.out.println("Coordinates:" + nodes[0].x + nodes[0].y );
-            //System.out.println(depot.x + " " + depot.y);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -118,13 +96,14 @@ class Init{
 			}
 		}
     }
+
+    //initialize the distance vector
     public void init_distance(){
         for(int i = 0; i<nodes.length; i++){
             nodes[i].distances = new int[max_nodes];
             for(int j = 0; j<nodes.length; j++){
                 nodes[i].distances[j] = (int) Math.round(Math.sqrt(Math.pow((nodes[i].getX() - nodes[j].getX()), 2) +
                 Math.pow((nodes[i].getY() - nodes[j].getY()), 2)));
-                //System.out.println(nodes[i].distances[j]);
             }
         }
     }

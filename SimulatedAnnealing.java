@@ -22,34 +22,12 @@ class SimulatedAnnealing{
         int minJ = -1;
         int minChange = 0;
         for ( int i = 1; i < size - 3; i++ ){
-            //if(i+1 > size) break;
             for ( int j = i + 2; j< size-1; j++) {
-                //dist(i,j) + dist(i+1,j+1) - dist(i,i+1) - dist(j,j+1)
                 // route 1: dist(i,j) + dist(i+1,j+1)
                 // route 2: dist(i,i+1) - dist(j,j+1)
-                //if(j+1 > size || i+1 > size) break;
-
-                //Route route1 = new Route();
-                //route1.addNode(r.getNode(i));
-                //route1.addNode(r.getNode(j));
-                //route1.addNode(r.getNode(i+1));
-                //route1.addNode(r.getNode(j+1));
-
-                //int distance1 = r.getNode(i).distanceTo(r.getNode(j).getId()-1) +
-                //r.getNode(j).distanceTo(r.getNode(i+1).getId()-1) + r.getNode(i+1).distanceTo(r.getNode(j+1).getId()-1);
                 int distance1 = r.getNode(i).distanceTo(r.getNode(j).getId()-1) + r.getNode(i+1).distanceTo(r.getNode(j+1).getId()-1);
-
-                //Route route2 = new Route();
-                //route2.addNode(r.getNode(i));
-                //route2.addNode(r.getNode(i+1));
-                //route2.addNode(r.getNode(j));
-                //route2.addNode(r.getNode(j+1));
-
-                //int distance2 = r.getNode(i).distanceTo(r.getNode(i+1).getId()-1) +
-                //r.getNode(i+1).distanceTo(r.getNode(j).getId()-1) + r.getNode(j).distanceTo(r.getNode(j+1).getId()-1);
                 int distance2 = r.getNode(i).distanceTo(r.getNode(i+1).getId()-1) + r.getNode(j).distanceTo(r.getNode(j+1).getId()-1);
 
-                //int better = route1.getDistance() - route2.getDistance();
                 int better = distance1 - distance2;
                 if ( better < minChange){
                     minChange = better;
@@ -78,13 +56,9 @@ class SimulatedAnnealing{
         for(int g = 0; g<setSize; g++ ){
             for(int h = g+1; h<setSize; h++){
                 for ( int i = 1; i < set.getRoute(g).routeSize()-1; i++ ){
-                    //if(i+1 > size) break;
                     for ( int j = 1; j<set.getRoute(h).routeSize()-1; j++) {
-                        // g = k
-                        // h = k'
                         // route 1: dist(i k,j+1 k') + dist(j k',i+1 k)
                         // route 2: dist(i k,i+1 k) - dist(j k',j+1 k')
-                        //if(j+1 > size || i+1 > size) break;
 
                         int distance1 =
                         set.getRoute(g).getNode(i).distanceTo(set.getRoute(h).getNode(j+1).getId()-1) +
@@ -141,17 +115,12 @@ class SimulatedAnnealing{
         while (temperature > 1) {
             //Create new neighbour set
             Set newSolution = currentSolution.copySet();
-            //System.out.println("OUR BELOVED RANDOM:"+ (double) (1.0/3.0));
             double r;
             int iter = 0;
             while(iter < maxIter){
                 r = Math.random();
-                //if(newSolution.getDistance() < improvement && temperature != 1000) improvement = newSolution.getDistance();
-                //System.out.println(newSolution.getDistance());
-                //System.out.println(newSolution);
+                //random swap
                 if(r<=(double) (1.0/3.0)){
-                    //System.out.println("--------------------------------------------------------------------->1");
-                    //swap
                     boolean validSolution = false;
                     while(!validSolution){
                         //Get a random positions in the set
@@ -180,10 +149,9 @@ class SimulatedAnnealing{
                         }
                     }
                 }
-
+                //random insertion
                 else if((double) (1.0/3.0)>r && r<=(double) (2.0/3.0)){
-                    //System.out.println("--------------------------------------------------------------------->2");
-                    //random insertion
+
                     boolean validSolution = false;
                     while(!validSolution){
                         //Get a random positions in the set
@@ -218,9 +186,8 @@ class SimulatedAnnealing{
                         }
                     }
                 }
+                //random 2-opt
                 else if((double) (2.0/3.0)>r && r<= (double) (1.0)){
-                    //System.out.println("--------------------------------------------------------------------->3");
-                    //random 2-opt
                     boolean validSolution = false;
                     while(!validSolution){
                         //Get a random positions in the set
@@ -247,29 +214,14 @@ class SimulatedAnnealing{
                             validSolution = true;
                         }
                     }
-                    /*
-                    for(int i = 0; i<newSolution.setSize();i++){
-                        Route routeX = newSolution.getRoute(i);
-                        Route omegaRoute = twoOpt(routeX);
-                        if(omegaRoute.getDistance() < routeX.getDistance()){
-                            newSolution.setRoute(i,omegaRoute);
-                        }
-                    }
-                    */
                 }
-                //System.out.println(newSolution);
                 newSolution = twoOpt(newSolution);
                 // Get energy of solutions
                 int currentEnergy = currentSolution.getDistance();
                 int neighbourEnergy = newSolution.getDistance();
-                //System.out.println("CURRENT ENERGY: " +currentEnergy );
-                //System.out.println("NEIGHBOUR ENERGY: " +neighbourEnergy );
-                //solutions.add(neighbourEnergy);
                 // Keep track of the best solution found
                 if (currentSolution.getDistance() < best.getDistance()) {
                     best = currentSolution.copySet();
-                    //System.out.println(best);
-                    //System.out.println(best.getDistance());
                 }
                 // Decide if we should accept the neighbour
                 if (acceptanceProbability(currentEnergy, neighbourEnergy, temperature) > Math.random()) {
@@ -279,12 +231,8 @@ class SimulatedAnnealing{
             }
             // Cool system
             temperature *= 1-coolingRate;
-            //Perform Local search based on swap operation on X best
-            //2-opt
-            //currentSolution = twoOpt(best);
         }
     System.out.println(best);
     System.out.println(best.getDistance());
-    //System.out.println(improvement);
     }
 }

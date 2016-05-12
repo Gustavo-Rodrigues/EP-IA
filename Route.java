@@ -6,19 +6,15 @@ public class Route{
 
     //route
     private ArrayList<Node> route = new ArrayList<Node>();
-    //Cache
+    //the distance travelled in the route, can be seen as the cost
     private int distance = 0;
-    //maximum capacity
-    //private int maxCapacity;
-    //capacity
+    //the amount of load that is carried
     private int capacity = 0;
 
-    /*
-    public Route(int maxCapacity){
-        this.maxCapacity = maxCapacity;
-    }
-    */
 
+    ////////////////////////////////////
+    //            GETTERS             //
+    ////////////////////////////////////
     // Gets a node from the route
     public Node getNode(int nodePosition) {
         return route.get(nodePosition).copyNode();
@@ -69,6 +65,7 @@ public class Route{
         return newList;
     }
 
+    //copy the instance of an object
     public Route copyRoute(){
         Route newRoute = new Route();
         newRoute.setRoute(getRoute());
@@ -77,42 +74,65 @@ public class Route{
         return newRoute;
     }
 
+    //Get the size of the route
+    public int routeSize() {
+        return route.size();
+    }
+
+    ////////////////////////////////////
+    //            SETTERS             //
+    ////////////////////////////////////
+
+    //set the route
     public void setRoute(ArrayList<Node> route){
         this.route = route;
     }
 
+    //set the distance
     public void setDistance(int distance){
         this.distance = distance;
     }
 
+    //set the capacity
     public void setCapacity(int capacity){
         this.capacity = capacity;
     }
 
+    //set a node in a specific position
     public void setNode(int index, Node node){
         route.set(index,node);
     }
 
+    ////////////////////////////////////
+    //             ADDERS             //
+    ////////////////////////////////////
+
+    //Currently not used because we are not using the random generator
     //add load to the capacity
     public void addLoad(int load){
         this.capacity += load;
     }
 
-    //add a node into the route
+    //append a not into the route
     public void addNode(Node node){
         route.add(node);
     }
 
+    //adds a node in a specific position
     public void addNode(int index,Node node){
         route.add(index,node);
     }
+
+    ////////////////////////////////////
+    //           REMOVERS             //
+    ////////////////////////////////////
+
+    //remove a node
     public void removeNode(int index){
         route.remove(index);
     }
-    // Get number of nodes on our route
-    public int routeSize() {
-        return route.size();
-    }
+
+
 
     @Override
     public String toString() {
