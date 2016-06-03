@@ -1,11 +1,14 @@
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.Collections;
 import java.lang.Math;
 import java.util.Comparator;
 
-
-class SimulatedAnnealing implements SA{
-
+/*TODO
+    - to the function if any node is repeated
+    - test the second condition
+*/
+class NewSimulatedAnnealing implements SA{
     public double acceptanceProbability(int energy, int newEnergy, double temperature){
         // If the new solution is better, accept it
         if (newEnergy < energy) {
@@ -75,7 +78,6 @@ class SimulatedAnnealing implements SA{
                             set.getMaximumCapacity() &&
                             set.getRoute(h).getCapacity() - set.getRoute(h).getNode(j+1).getDemand() + set.getRoute(g).getNode(i+1).getDemand() <
                             set.getMaximumCapacity()){
-                                //it's feasible UHUUU
                                 minChange = better;
                                 minRoute1 = g;
                                 minRoute2 = h;
@@ -102,7 +104,7 @@ class SimulatedAnnealing implements SA{
     }
 
     public void simulatedAnnealing(Set set, double temperature, double coolingRate, int maxIter){
-        //System.out.println("Starting");
+        ArrayList<Integer> solutions = new ArrayList<Integer>();
         Set currentSolution = set.copySet();
         ArrayList<Node> n = new ArrayList<Node>();
         for(int i = 0; i<currentSolution.setSize(); i++){
@@ -118,6 +120,8 @@ class SimulatedAnnealing implements SA{
                    else return -1;
                }
            });
+        //System.out.println("Starting");
+
         //System.out.println("Initial solution distance: " + currentSolution.getDistance());
 
         // Set as current best
@@ -125,7 +129,7 @@ class SimulatedAnnealing implements SA{
         //System.out.println(best);
         int improvement = Integer.MAX_VALUE;
 
-        // Loop until system has cooled
+        //Loop until system has cooled
         while (temperature > 1) {
             //Create new neighbour set
             Set newSolution = currentSolution.copySet();
@@ -152,12 +156,23 @@ class SimulatedAnnealing implements SA{
                         // Swap them
                         if( (route1.getCapacity() - node1.getDemand() + node2.getDemand() <= currentSolution.getMaximumCapacity()) &&
                         (route2.getCapacity() - node2.getDemand() + node1.getDemand() <= currentSolution.getMaximumCapacity()) ){
-                            //System.out.println("Node1: "+ node1.getId() + " " + "Node2: " + node2.getId());
+                            //if are two different routes
                             if(setPos1 != setPos2){
                                 route1.setNode(routePos1, node2);
                                 route2.setNode(routePos2, node1);
                                 newSolution.setRoute(setPos1,route1);
                                 newSolution.setRoute(setPos2,route2);
+                                validSolution = true;
+                            }else{
+                                if(routePos1>routePos2){
+                                    int temp = routePos1;
+                                    routePos1 = routePos2;
+                                    routePos2 = temp;
+                                }
+                                route1.addNode(routePos1,route1.getNode(routePos2));
+                                route1.addNode(routePos2+1,route1.getNode(routePos1+1));
+                                route1.removeNode(routePos1+1);
+                                route1.removeNode(routePos2+1);
                                 validSolution = true;
                             }
                         }
@@ -165,7 +180,6 @@ class SimulatedAnnealing implements SA{
                 }
                 //random insertion
                 else if((double) r>(1.0/3.0) && r<=(double) (2.0/3.0)){
-                //if((double) r>(1.0/3.0) && r<=(double) (2.0/3.0)){
                     boolean validSolution = false;
                     while(!validSolution){
                         //Get a random positions in the set
@@ -223,63 +237,112 @@ class SimulatedAnnealing implements SA{
                         }
                     }
                 }
-                //random 2-opt
-                else if((double) (2.0/3.0)>r && r<= (double) (1.0)){
-                //if((double) (2.0/3.0)>r && r<= (double) (1.0)){
+                //Partial reversion
+                else if((double) r>(2.0/3.0) && r<= (double) (1.0)){
                     boolean validSolution = false;
                     while(!validSolution){
-                        //Get a random positions in the set
-                        int setPos1 = (int) ( newSolution.setSize() * Math.random());
-                        //Get random positions in the route
-                        int routePos1 = (int) ( ((newSolution.getRoute(setPos1).routeSize()-1)) * Math.random())+1;
-                        int routePos2 = (int) ( ((newSolution.getRoute(setPos1).routeSize()-1)) * Math.random())+1;
-                        //get the routes
-                        Route route1 = newSolution.getRoute(setPos1);
-                        //Route route2 = newSolution.getRoute(setPos2);
-                        //get the nodes
-                        Node node1 = route1.getNode(routePos1);
-                        Node node2 = route1.getNode(routePos2);
-                        // Swap them
-                        if(routePos1 != routePos2){
-                            Route newRoute = newSolution.getRoute(setPos1);
-                            Route case1 = twoOpt(newRoute);
-                            newRoute.setNode(routePos1, node2);
-                            newRoute.setNode(routePos2, node1);
-                            Route case2 = twoOpt(newRoute);
-                            if(case1.getDistance() < case2.getDistance()){
-                                newSolution.setRoute(setPos1,case1);
-                            }else newSolution.setRoute(setPos1,case2);
+                        //System.out.println("------------------------------------------->3");
+                        //System.out.println(best.getTotalNodes());
+                        //System.out.println(newSolution.getTotalNodes());
+                        boolean itsOver = false;
+                        //get the starting point of the reversal
+                        //minus 1 beacuse we need a "positive range"
+                        int setPos1 = (int) ( (newSolution.getTotalNodes()-1) * Math.random())+1;
+                        int setPos2 = (int) ( (newSolution.getTotalNodes()-setPos1) * Math.random() )+setPos1;
+                        //consider all the routes as one so that we can acctually now when to stop
+                        int currentPosition = 0;
+                        //System.out.println(setPos1+" "+setPos2);
+                        Stack<Node> stack = new Stack<Node>();
+                        for(int i = 0; i<newSolution.setSize(); i++){
+                            for(int j = 1; j<newSolution.getRoute(i).routeSize(); j++){
+                                if(currentPosition>setPos2){
+                                    itsOver = true;
+                                    break;
+                                }
+                                //if it's in the range add to the stack
+                                if(currentPosition >= setPos1){
+                                    stack.push(newSolution.getRoute(i).getNode(j));
+                                }
+                                currentPosition++;
+                            }
+                            if(itsOver) break;
+                        }
+                        //find routepos 1 and routepos 2
+                        currentPosition = 0;
+                        int set1 = 0;
+                        int set2 = 0;
+                        int routePos1 = 0;
+                        int routePos2 = 0;
+                        for(int i = 0; i<newSolution.setSize(); i++){
+                            boolean over = false;
+                            for(int j = 1; j<newSolution.getRoute(i).routeSize(); j++){
+                                if(currentPosition == setPos1){
+                                    set1 = i;
+                                    routePos1 = j;
+                                }
+                                if(currentPosition == setPos2){
+                                    set2 = i;
+                                    routePos2 = j;
+                                    over = true;
+                                    break;
+                                }
+                                currentPosition++;
+                            }
+                            if(over) break;
+                        }
+                        //System.out.println(stack);
+                        //System.out.println(set1+" "+set2);
+                        Set copy = newSolution.copySet();
+                        while(set1<=set2){
+                            //we have to remove everything on a route so this can work
+                            int diff = copy.getRoute(set1).routeSize()-routePos1;
+                            //System.out.println(diff);
+                            //remove part
+                            if(diff>0 && stack.size()>0){
+                                if(set1<set2){
+                                    Route newRoute = copy.getRoute(set1);
+                                    for(int i = 0;i<diff;i++){
+                                        newRoute.removeNode(newRoute.routeSize()-1);
+                                    }
+                                    //System.out.println("HERE!!!");
+                                    //System.out.println(newRoute);
+                                    while(newRoute.getCapacity() + stack.peek().getDemand() <= copy.getMaximumCapacity() && stack.size()>0){
+                                        newRoute.addNode(stack.pop());
+                                        copy.setRoute(set1,newRoute);
+                                        if(stack.size()==0) break;
+                                    }
+                                    //System.out.println(newRoute);
+                                }else if(set1==set2){
+                                    Route newRoute = copy.getRoute(set1);
+                                    for(int i = routePos1; i<=routePos2; i++){
+                                        newRoute.removeNode(routePos1);
+                                    }
+                                    //System.out.println(newRoute);
+                                    while(newRoute.getCapacity() + stack.peek().getDemand() <= copy.getMaximumCapacity() && stack.size()>0){
+                                        newRoute.addNode(routePos1,stack.pop());
+                                        copy.setRoute(set1,newRoute);
+                                        if(stack.size()==0) break;
+                                    }
+                                    //System.out.println(newRoute);
+                                }
+                            }
+                            set1++;
+                            routePos1 = 1;
+                        }
+                        if(stack.size()==0 && copy.getTotalNodes() == newSolution.getTotalNodes()){
+                            newSolution = copy.copySet();
                             validSolution = true;
                         }
                     }
                 }
-                //newSolution = twoOpt(newSolution);
-                //Get energy of solutions
+
+                // Get energy of solutions
                 int currentEnergy = currentSolution.getDistance();
                 int neighbourEnergy = newSolution.getDistance();
                 // Keep track of the best solution found
                 if (currentSolution.getDistance() < best.getDistance()) {
                     best = currentSolution.copySet();
                 }
-                /*
-                int cont = 0;
-                ArrayList<Node> hope = new ArrayList<Node>(n);
-                for(int i = 0; i<currentSolution.setSize(); i++){
-                    for(int j = 1; j<currentSolution.getRoute(i).routeSize(); j++){
-                        for(int k = 0; k<hope.size(); k++){
-                            if(currentSolution.getRoute(i).getNode(j).getId() == hope.get(k).getId()){
-                                hope.remove(k);
-                                k = 0;
-                                cont++;
-                                break;
-                            }
-                        }
-                    }
-                }
-                */
-                //if(cont>n.size()) System.out.println("A MAIS");
-                //if(hope.size()>0) System.out.println(hope);
-
                 // Decide if we should accept the neighbour
                 if (acceptanceProbability(currentEnergy, neighbourEnergy, temperature) > Math.random()) {
                     currentSolution = newSolution.copySet();
@@ -291,7 +354,7 @@ class SimulatedAnnealing implements SA{
             currentSolution = twoOpt(best);
             temperature *= 1-coolingRate;
         }
-    //System.out.println(best);
-    System.out.println(best.getDistance());
+        //System.out.println(best);
+        System.out.println("Min distance: " + best.getDistance());
     }
 }

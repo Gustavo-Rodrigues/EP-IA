@@ -11,6 +11,13 @@ class Node{
         return " "+ (id-1);
     }
 
+    @Override
+    public boolean equals(Object cmp){
+        if( ((Node) cmp).getId() != getId()) return false;
+        return true;
+    }
+
+
     ////////////////////////////////////
     //            GETTERS             //
     ////////////////////////////////////
@@ -19,7 +26,7 @@ class Node{
     public int getId(){
         return id;
     }
-    
+
     //get coordinate X
     public int getX(){
         return x;
@@ -51,6 +58,17 @@ class Node{
         return newNode;
     }
 
+    //this is used for the annealing
+    //calculate the distance from one node to another
+    public int distanceTo(int destination){
+        return distances[destination];
+    }
+
+    public int getDistance(Node to){
+        int distance = (int) Math.round(Math.sqrt(Math.pow((getX() - to.getX()), 2) + Math.pow((getY() - to.getY()), 2)));
+        return distance;
+    }
+
     ////////////////////////////////////
     //            SETTERS             //
     ////////////////////////////////////
@@ -77,8 +95,4 @@ class Node{
         this.distances = distances;
     }
 
-    //calculate the distance from one node to another
-    public int distanceTo(int destination){
-        return distances[destination];
-    }
 }

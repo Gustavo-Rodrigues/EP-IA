@@ -84,6 +84,16 @@ public class Set{
         return set.size();
     }
 
+    //get the quantity of nodes in the set
+    public int getTotalNodes(){
+        int total = 0;
+        for(int i = 0; i<set.size(); i++){
+            //minus 1 beacuse of the 0 at the beginning
+            total += set.get(i).routeSize()-1;
+        }
+        return total;
+    }
+
     ////////////////////////////////////
     //            SETTERS             //
     ////////////////////////////////////
@@ -242,6 +252,7 @@ public class Set{
 		}
 		return sList;
 	}
+    /*
 
     //create a set of routes in which the routes are created randomically accordingly to the limit of capacity
     public void createSet(){
@@ -250,21 +261,35 @@ public class Set{
         Random random = new Random();
         Route route = new Route();
         int randomPosition = random.nextInt(cNodes.size());
+        //System.out.println("WTF");
         while(cNodes.size() > 0){
+            //System.out.println("CNODES SIZE:"+cNodes.size());
             //raffle the position
             randomPosition = random.nextInt(cNodes.size());
+            //System.out.println("RAND:"+cNodes.get(randomPosition).getDemand());
             if(route.getCapacity() + cNodes.get(randomPosition).getDemand() <= capacity){
+                //System.out.println("WTF2");
                 //adds the node to the route
                 route.addNode(cNodes.get(randomPosition));
                 route.addLoad(cNodes.get(randomPosition).getDemand());
                 //remove the node from the nodes
                 cNodes.remove(randomPosition);
             }else{
+                //System.out.println("WTF3");
                 addRoute(route);
                 route = new Route();
             }
         }
         addRoute(route);
+    }
+    */
+
+    @Override
+    public boolean equals(Object cmp){
+        for(int i = 0; i<((Set) cmp).setSize(); i++){
+            if(!((Set) cmp).getRoute(i).equals(set.get(i))) return false;
+        }
+        return true;
     }
 
     @Override

@@ -11,6 +11,8 @@ public class Route{
     //the amount of load that is carried
     private int capacity = 0;
 
+    //we are reusing this clas for clustering, so we need a geometrical center
+    private Node geometricalCenter = null;
 
     ////////////////////////////////////
     //            GETTERS             //
@@ -41,6 +43,7 @@ public class Route{
 
     //get the current capacity
     public int getCapacity(){
+        if(routeSize() == 0) return 0;
         int routeCapacity = 0;
         Node currentNode;
         // Loop through the Nodes
@@ -79,9 +82,37 @@ public class Route{
         return route.size();
     }
 
+    //we might have problems because of the loss of presicion int -> int
+    //the geometrical center is a X and Y pair
+    //we can describe it as a node
+    public Node getGeometricalCenter(){
+        if(geometricalCenter != null) return geometricalCenter;
+        else{
+            updateGeometricalCenter();
+            return geometricalCenter;
+        }
+    }
+
     ////////////////////////////////////
     //            SETTERS             //
     ////////////////////////////////////
+    public void updateGeometricalCenter(){
+        //get the X
+        int x = 0;
+        for(int i = 0; i<routeSize(); i++){
+            x += route.get(i).getX();
+        }
+        x = x/routeSize();
+        //get the Y
+        int y = 0;
+        for(int i = 0; i<routeSize(); i++){
+            y += route.get(i).getY();
+        }
+        y = y/routeSize();
+        geometricalCenter = new Node();
+        geometricalCenter.setX(x);
+        geometricalCenter.setY(y);
+    }
 
     //set the route
     public void setRoute(ArrayList<Node> route){
@@ -132,6 +163,13 @@ public class Route{
         route.remove(index);
     }
 
+    @Override
+    public boolean equals(Object cmp){
+        for(int i = 0; i<((Route) cmp).routeSize(); i++){
+            if(! ((Route) cmp).getNode(i).equals(route.get(i))) return false;
+        }
+        return true;
+    }
 
 
     @Override
@@ -141,7 +179,7 @@ public class Route{
             geneString += getNode(i)+ " " +"=>";
         }
         geneString += " 0";
-        geneString += " " + "Cost: " + getDistance();
+        geneString += " " + "Cost: " + (int) getDistance();
         geneString += " " + "Capacity: " + getCapacity();
         return geneString;
     }
