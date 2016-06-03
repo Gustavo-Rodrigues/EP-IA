@@ -3,10 +3,10 @@ class EP{
         Stopwatch s = new Stopwatch();
 		s.start();
         //reads the file and get some information
-        Init initialize = new Init("/home/gustavo/Documents/EP-IA/P-n16-k8.vrp");
+        Init initialize = new Init("/home/gustavo/Documents/EP-IA/A-n32-k5.vrp");
         initialize.init_distance();
-        Node nodes[];
-        nodes = initialize.getNodes();
+        //Node nodes[];
+        //nodes = initialize.getNodes();
         /*
         System.out.println("DEMANDS:");
         for(int x = 0;x<initialize.getMaxNodes();x++){
@@ -23,11 +23,23 @@ class EP{
         }
         */
         Set set = new Set(initialize.getNodes(), initialize.getCapacity());
-        //set.createSet();
         set.clarkeWright();
-        System.out.println(set);
+        System.out.println("NEW METHOD: ");
+        //NewSimulatedAnnealing nsa = new NewSimulatedAnnealing();
+        //    for(int r = 0; r<=50; r++){
+        //    System.out.println(r);
+        //    nsa.simulatedAnnealing(set,500,0.03,500);
+        //}
+        System.out.println("OLD METHOD: ");
         SimulatedAnnealing sa1 = new SimulatedAnnealing();
-        sa1.simulatedAnnealing(set,100,0.01,2500);
+        for(int r = 0; r<=50; r++){
+            System.out.println(r);
+            sa1.simulatedAnnealing(set,500,0.03,500);
+        }
+        //Centroid centroid = new Centroid(initialize.getNodes(), initialize.getCapacity());
+        //centroid.construction();
+        //centroid.adjustment(centroid.construction());
+        //centroid.algorithm();
         s.stop();
 		System.out.println(s.toString());
     }
