@@ -103,9 +103,9 @@ class Centroid{
                 }
             }
         }
-        System.out.println("ADJUSTMENT");
-        System.out.println(centroid);
-        System.out.println(centroid.getDistance());
+        //System.out.println("ADJUSTMENT");
+        //System.out.println(centroid);
+        //System.out.println(centroid.getDistance());
         return centroid;
     }
 
@@ -195,7 +195,7 @@ class Centroid{
             clusterOptimizer.addRoute(newRoute);
             //newRoute = twoOpt(newRoute);
             CentroidSimulatedAnnealing csa = new CentroidSimulatedAnnealing();
-            clusterOptimizer = csa.simulatedAnnealing(clusterOptimizer,1500,0.02,5000);
+            clusterOptimizer = csa.simulatedAnnealing(clusterOptimizer,500,0.02,500);
             clusters.setRoute(i,clusterOptimizer.getRoute(0));
         }
 
@@ -209,9 +209,10 @@ class Centroid{
         if(clusters.getDistance()< best.getDistance()) best = clusters.copySet();
         //System.out.println("BEFORE");
         //System.out.println(clusters);
+        int cont = 0;
         do{
-            if( clusters.equals(adjustment(clusters)) ) break;
-            else{
+            clusters = adjustment(clusters);
+            //else{
                 //Add depot to the clusters
                 for(int i = 0; i<clusters.setSize(); i++){
                     Route newRoute = clusters.getRoute(i);
@@ -228,9 +229,12 @@ class Centroid{
                     clusterOptimizer.addRoute(newRoute);
                     //newRoute = twoOpt(newRoute);
                     CentroidSimulatedAnnealing csa = new CentroidSimulatedAnnealing();
-                    clusterOptimizer = csa.simulatedAnnealing(clusterOptimizer,1500,0.02,5000);
+                    clusterOptimizer = csa.simulatedAnnealing(clusterOptimizer,500,0.02,500);
                     clusters.setRoute(i,clusterOptimizer.getRoute(0));
                 }
+                System.out.println(clusters);
+                System.out.println(clusters.getDistance());
+                if(clusters.getDistance()< best.getDistance()) best = clusters.copySet();
 
                 //Remove depot from the clusters
                 for(int i = 0; i<clusters.setSize(); i++){
@@ -238,18 +242,19 @@ class Centroid{
                     newRoute.removeNode(0);
                     clusters.setRoute(i,newRoute);
                 }
-                if(clusters.getDistance()< best.getDistance()) best = clusters.copySet();
-            }
-        }while(true);
 
-        System.out.println("ALGORITHM");
-        for(int i = 0; i<best.setSize(); i++){
-            Route newRoute = best.getRoute(i);
-            newRoute.addNode(0,nodes.get(0));
-            best.setRoute(i,newRoute);
-        }
-        System.out.println(best);
-        System.out.println(best.getDistance());
+                cont++;
+            //}
+        }while(cont<10);
+
+        //System.out.println("ALGORITHM");
+        //for(int i = 0; i<best.setSize(); i++){
+        //    Route newRoute = best.getRoute(i);
+        //    newRoute.addNode(0,nodes.get(0));
+        //    best.setRoute(i,newRoute);
+        //}
+        //System.out.println(best);
+        //System.out.println(best.getDistance());
 
     }
 }
