@@ -45,6 +45,30 @@ class SimulatedAnnealing implements SA{
         }
         return route;
     }
+    /*
+    public Route twoOpt(Route r){
+        // Get tour size
+        Route best = r.copyRoute();
+        int size = r.routeSize();
+        for ( int i = 1; i < size - 2; i++ ){
+            for ( int j = i + 1; j< size-1; j++) {
+                // route 1: dist(i,j) + dist(i+1,j+1)
+                // route 2: dist(i,i+1) - dist(j,j+1)
+                Route tempRoute = r.copyRoute();
+                tempRoute.addNode(i+1,r.getNode(j));
+                tempRoute.addNode(i+1+1,r.getNode(j+1));
+                tempRoute.removeNode(j+2);
+                tempRoute.removeNode(j+2);
+
+                if ( tempRoute.getDistance() < best.getDistance()){
+                    best = tempRoute.copyRoute();
+                }
+            }
+        }
+        return best;
+    }
+    */
+
 
     public Set twoOpt(Set set){
         Set newSet = set.copySet();
@@ -101,7 +125,7 @@ class SimulatedAnnealing implements SA{
         return newSet;
     }
 
-    public void simulatedAnnealing(Set set, double temperature, double coolingRate, int maxIter){
+    public Set simulatedAnnealing(Set set, double temperature, double coolingRate, int maxIter){
         //System.out.println("Starting");
         Set currentSolution = set.copySet();
         ArrayList<Node> n = new ArrayList<Node>();
@@ -224,7 +248,7 @@ class SimulatedAnnealing implements SA{
                     }
                 }
                 //random 2-opt
-                else if((double) (2.0/3.0)>r && r<= (double) (1.0)){
+                else if((double) r>(2.0/3.0) && r<= (double) (1.0)){
                 //if((double) (2.0/3.0)>r && r<= (double) (1.0)){
                     boolean validSolution = false;
                     while(!validSolution){
@@ -293,5 +317,6 @@ class SimulatedAnnealing implements SA{
         }
     //System.out.println(best);
     System.out.println(best.getDistance());
+    return best;
     }
 }

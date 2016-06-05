@@ -103,7 +103,7 @@ class NewSimulatedAnnealing implements SA{
         return newSet;
     }
 
-    public void simulatedAnnealing(Set set, double temperature, double coolingRate, int maxIter){
+    public Set simulatedAnnealing(Set set, double temperature, double coolingRate, int maxIter){
         ArrayList<Integer> solutions = new ArrayList<Integer>();
         Set currentSolution = set.copySet();
         ArrayList<Node> n = new ArrayList<Node>();
@@ -173,6 +173,7 @@ class NewSimulatedAnnealing implements SA{
                                 route1.addNode(routePos2+1,route1.getNode(routePos1+1));
                                 route1.removeNode(routePos1+1);
                                 route1.removeNode(routePos2+1);
+                                newSolution.setRoute(setPos1,route1);
                                 validSolution = true;
                             }
                         }
@@ -356,5 +357,6 @@ class NewSimulatedAnnealing implements SA{
         }
         //System.out.println(best);
         System.out.println("Min distance: " + best.getDistance());
+        return best;
     }
 }

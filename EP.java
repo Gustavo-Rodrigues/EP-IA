@@ -22,20 +22,23 @@ class EP{
             System.out.println();
         }
         */
+
         Set set = new Set(initialize.getNodes(), initialize.getCapacity());
         set.clarkeWright();
         System.out.println("NEW METHOD: ");
-        //NewSimulatedAnnealing nsa = new NewSimulatedAnnealing();
-        //    for(int r = 0; r<=50; r++){
-        //    System.out.println(r);
-        //    nsa.simulatedAnnealing(set,500,0.03,500);
-        //}
+        NewSimulatedAnnealing nsa = new NewSimulatedAnnealing();
+            for(int r = 0; r<=50; r++){
+            System.out.println(r);
+            nsa.simulatedAnnealing(set,500,0.03,500);
+        }
+        /*
         System.out.println("OLD METHOD: ");
         SimulatedAnnealing sa1 = new SimulatedAnnealing();
         for(int r = 0; r<=50; r++){
             System.out.println(r);
-            sa1.simulatedAnnealing(set,500,0.03,500);
+            sa1.simulatedAnnealing(set,500,0.03,2500);
         }
+        */
         //Centroid centroid = new Centroid(initialize.getNodes(), initialize.getCapacity());
         //centroid.construction();
         //centroid.adjustment(centroid.construction());

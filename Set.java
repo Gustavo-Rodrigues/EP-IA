@@ -22,6 +22,10 @@ public class Set{
     ////////////////////////////////////
     public Set(){};
 
+    public Set(int capacity){
+        this.capacity = capacity;
+    }
+
     public Set(Node nodes[], int capacity){
         this.nodes = new ArrayList<Node>(Arrays.asList(nodes));
         this.capacity = capacity;
